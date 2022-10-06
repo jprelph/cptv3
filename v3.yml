@@ -1,0 +1,23 @@
+---
+resources:
+  - name: src
+    type: git
+    check_every: 1m
+    source:
+      uri: git@github.com:jprelph/cptv3
+      branch: ((branch)) # Not 100% sure if this should be stuck to main or not - options either way.
+
+jobs:
+- name: Setter
+  plan:
+    - get: src
+      trigger: true
+    - task: template
+    ## Do templating here and save to pipeline.yaml, which also includes this starter
+    - across: 
+      - var: branch
+        values: ["main", "dev"]
+    - set_pipeline: self
+      file: pipeline.yaml
+      instance_vars:
+        branch: ((.:branch))
